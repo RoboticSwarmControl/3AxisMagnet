@@ -1,3 +1,4 @@
+
 %% Roll a Magnet Ball in a Square Trajectory Using a Magnetic Field
 % INSTRUCTIONS
 %{
@@ -11,7 +12,7 @@
 %                      of steps to be displayed"
 %}
 
-function [ currX, currY, currZ ] = rollBallInSquare( x0, y0, phi, psi,corner,T,dt)
+function [ currX, currY, currZ ] = rollBallInSquare( x0, y0, phi, psi,corner,speed,ballsize,T,dt)
 %Print Task Name
 Task = 'Running Roll Ball in Square'
 %---------------------
@@ -22,8 +23,8 @@ Task = 'Running Roll Ball in Square'
 %  --------
 %     L
 % Length and Widht of the "Square"
-L = (x0-corner(1));
-W = (y0-corner(2));
+L = abs(x0-corner(1));
+W = abs(y0-corner(2));
 
 % Time per Meter 
 %for a constant velocity accross each leg
@@ -38,11 +39,6 @@ currX = [];
 currY = [];
 currZ = [];
 
-% Ball Radius
-size = 1;
-% Video Speed
-speed = 1;
-
 % First Orientation
 wRb = rotz(psi)*roty(phi);
 
@@ -51,30 +47,31 @@ corners = [x0 y0 0; corner(1) y0 0;corner(1) corner(2) 0; x0 corner(2) 0];
 
 
 %% Rolling Ball in Squre
+
 % First Leg
 % Use ballfwd Control
-[ currx, curry, currz, wRb] = ballfwd( TL,corners(1,:)',corners(2,:)',wRb,dt,speed,size)
+[ currx, curry, currz, wRb] = ballfwd( TL,corners(1,:)',corners(2,:)',wRb,dt,speed,ballsize)
 % Set Required Current Vecotrs 
 currX = [currX;currx];
 currY = [currY;curry];
 currZ = [currZ;currz];
-
+%}
 % Second Leg
-[ currx, curry, currz, wRb] = ballfwd( TW,corners(2,:)',corners(3,:)',wRb,dt,speed,size)
+[ currx, curry, currz, wRb] = ballfwd( TW,corners(2,:)',corners(3,:)',wRb,dt,speed,ballsize)
 % Set Required Current Vecotrs
 currX = [currX;currx];
 currY = [currY;curry];
 currZ = [currZ;currz];
 
 % Third Leg
-[ currx, curry, currz, wRb] = ballfwd( TL, corners(3,:)',corners(4,:)',wRb,dt,1,size)
+[ currx, curry, currz, wRb] = ballfwd( TL,corners(3,:)',corners(4,:)',wRb,dt,speed,ballsize)
 % Set Required Current Vecotrs
 currX = [currX;currx];
 currY = [currY;curry];
 currZ = [currZ;currz];
 
 % Fourth Leg
-[ currx, curry, currz,wRb] = ballfwd( TL,corners(4,:)',corners(1,:)',wRb,dt,speed,size)
+[ currx, curry, currz, wRb] = ballfwd( TW,corners(4,:)',corners(1,:)',wRb,dt,speed,ballsize)
 % Set Required Current Vecotrs
 currX = [currX;currx];
 currY = [currY;curry];

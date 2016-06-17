@@ -10,7 +10,7 @@
 %                      of steps to be displayed"
 %}
 
-function [ currX, currY, currZ ] = rollBallInCircle( x0, y0, phi, psi,radius,T,dt)
+function [ currX, currY, currZ ] = rollBallInCircle( x0, y0, phi, psi,radius,speed,ballsize,T,dt)
 %Print Task Name
 Task = 'Running Roll Ball in Circle'
 %---------------------
@@ -22,11 +22,6 @@ currZ = [];
 % First Orientation
 wRb = rotz(psi)*roty(phi);
 
-% Ball Radius
-size = 1;
-% Video Speed
-speed = 1;
-
 % Angle Step size
 del = 2*pi/(T/dt);
 
@@ -37,7 +32,7 @@ for Q = 0:del:2*pi
     pos2 = [radius*cos(Q);radius*sin(Q);0]
     if isnan(pos1)==0
     % Use ballfwd Control
-    [ currx, curry, currz, wRb] = ballfwd(dt,pos1,pos2,wRb,dt,speed,size);
+    [ currx, curry, currz, wRb] = ballfwd(dt,pos1,pos2,wRb,dt,speed,ballsize);
     % Set Required Current Vecotrs 
     currX = [currX;currx];
     currY = [currY;curry];

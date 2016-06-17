@@ -8,12 +8,20 @@ function [ theta ] = anglediff( vect1,vect2 )
 %Print Task Name
 Task = 'Running Find the Angle between two Vectors'
 %---------------------
-% world x-axis
-xaxis = [1;0;0];
-% Angle Between ball x-axis and vect1
-theta1 = acos(dot(vect1,xaxis)/(norm(xaxis)*norm(vect1)));
-% Angle Between ball x-axis and vect1
-theta2 = acos(dot(vect2,xaxis)/(norm(xaxis)*norm(vect2)));
+
+% Angle Between world x-axis and vect1
+theta1 = atan2(vect1(2),vect1(1));
+% Angles past 180 degrees EXCEPTION
+if theta1 <0 
+    theta1 = 2*pi + theta1;
+end
+
+% Angle Between world y-axis and vect2
+theta2 = atan2(vect2(2),vect2(1));
+% Angles past 180 degrees EXCEPTION
+if theta2 <0
+    theta2 = 2*pi + theta2;
+end
 
 % Difference Angle between two vectors in the world x-y plane 
 theta = theta2-theta1;

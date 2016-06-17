@@ -16,7 +16,7 @@ M = eye(3);
 % position of the ball center
 pos = [x,y,0];
 % Magnitude of Field
-a = 1;
+a = 100;
 % Magnetic Field with constant magnitude
 B = rotz(psi)*roty(phi)*[0;0;a];
  

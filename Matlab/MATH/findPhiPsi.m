@@ -17,20 +17,21 @@ comp = [wRb(1);0;wRb(3)];
 x_axis = [1;0;0];
 % Phi angle about world-y-axis between magnet-x-axis and world x-axis 
 phi = acos(dot(comp,x_axis)/(norm(x_axis)*norm(comp)));
+% Correcting for Negative Values
+if wRb(3) <0
+    phi = phi+pi;
+end
+
+
 % components of magnet-x-axis in the world-x-y plane
 comp = [wRb(1);wRb(2);0];
 % x-axis unit vector in world
 x_axis = [1;0;0];
 % Psi angle about world-z-axis between magnet-x-axis and world x-axis 
 psi = acos(dot(comp,x_axis)/(norm(x_axis)*norm(comp)));
-
-% Correcting for Negative Values
-if wRb(3) <0
-    phi = 2*pi - phi;
-end
 % Correcting for Negative Values
 if wRb(2) < 0
-    psi = 2*pi - psi;
+    psi = psi + pi;
 end
 end
 
