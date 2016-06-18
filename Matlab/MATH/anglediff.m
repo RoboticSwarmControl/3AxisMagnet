@@ -1,4 +1,5 @@
 %% Finds the angle and direction of rotation to go from vect1 to vect2 all in the world frame
+% Author: Mohamed Ghori
 % INSTRUCTIONS
 %{
 % Call using two vectors vect1(current) vect2(destination)

@@ -1,4 +1,5 @@
 %% Rotation Matrix About Y-Axis
+% Author: Mohamed Ghori
 % INSTRUCTIONS
 %{
 % Call Using the Angle of Rotation about Y-Axis (pitch)

@@ -1,4 +1,5 @@
 %% Find a phi and psi coresponding to a Rotatoin matrix
+% Author: Mohamed Ghori
 % INSTRUCTIONS
 %{
 % Call using current Rotation matrix

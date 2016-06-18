@@ -1,4 +1,5 @@
 %% Rotation Matrix About X-Axis
+% Author: Mohamed Ghori
 % INSTRUCTIONS
 %{
 % Call Using the Angle of Rotation about X-Axis (Roll)

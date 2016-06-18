@@ -1,4 +1,5 @@
 %% Rotation Matrix About z-Axis
+% Author: Mohamed Ghori
 % INSTRUCTIONS
 %{
 % Call Using the Angle of Rotation about Z-Axis (yaw)

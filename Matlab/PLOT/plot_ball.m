@@ -1,4 +1,5 @@
 %% PLOT MAGNET BALL POSITION
+% Author: Mohamed Ghori
 % INSTRUCTIONS 
 %{
 % 2-Steps
