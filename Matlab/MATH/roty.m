@@ -5,9 +5,9 @@
 % Call Using the Angle of Rotation about Y-Axis (pitch)
 %}
 
-function [ R ] = roty(pitch)
+function [ R,Task ] = roty(pitch)
 %Print Task Name
-Task = 'Constructing Rotation-Y Matrix'
+Task = 'Constructing Rotation-Y Matrix';
 %---------------------
 
 %% Y-Axis Rotation Matrix

@@ -5,9 +5,9 @@
 % Call using two vectors vect1(current) vect2(destination)
 %}
 
-function [ theta ] = anglediff( vect1,vect2 )
+function [ theta,Task ] = anglediff( vect1,vect2 )
 %Print Task Name
-Task = 'Running Find the Angle between two Vectors'
+Task = 'Running Find the Angle between two Vectors';
 %---------------------
 
 % Angle Between world x-axis and vect1
@@ -25,7 +25,9 @@ if theta2 <0
 end
 
 % Difference Angle between two vectors in the world x-y plane 
-theta = theta2-theta1;
-
+theta = theta1 - theta2;
+%  if theta <0
+%      theta = theta + 2*pi;
+%  end
 end
 

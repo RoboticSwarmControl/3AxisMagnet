@@ -6,11 +6,11 @@
 % decomposes R into phi(rotation about world-y-axis ) and psi(rotation about world-z-axis)
 %}
 
-function [ phi, psi ] = findPhiPsi( wRb )
+function [ phi, psi, Task] = findPhiPsi( wHb )
 %Print Task Name
-Task = 'Running Find Phi and Psi'
+Task = 'Running Find Phi and Psi';
 %---------------------
-
+wRb = wHb(1:3,1:3);
 %% Find phi and psi
 % Components of magnet-x-axis in the world-x-z plane
 comp = [wRb(1);0;wRb(3)];

@@ -5,9 +5,9 @@
 % Call Using the Angle of Rotation about Z-Axis (yaw)
 %}
 
-function [ R ] = rotz(yaw)
+function [ R, Task ] = rotz(yaw)
 %Print Task Name
-Task = 'Constructing Rotation-z Matrix'
+Task = 'Constructing Rotation-z Matrix';
 %---------------------
 
 %% z-Azis Rotation Matriz

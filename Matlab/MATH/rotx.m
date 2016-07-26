@@ -5,9 +5,9 @@
 % Call Using the Angle of Rotation about X-Axis (Roll)
 %}
 
-function [ R ] = rotx(roll)
+function [ R,Task ] = rotx(roll)
 %Print Task Name
-Task = 'Constructing Rotation-X Matrix'
+Task = 'Constructing Rotation-X Matrix';
 %---------------------
 
 %% X-Axis Rotation Matrix
