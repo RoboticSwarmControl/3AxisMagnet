@@ -9,7 +9,12 @@
 
 %% NOTE:should I remove mov?  
 
+
 function [curra, currb, currc, type, mov, Task] =  MAIN(type,x0,y0,phi,psi,ShapeSize,T,dt,speed,ballsize)
+% add folders
+addpath('./CLEAN');addpath('./SHAPES');addpath('./PLOT');addpath('./MATH');addpath('./CNTRL')
+
+
 %Print Task Name
 Task = 'Running Main';
 %---------------------

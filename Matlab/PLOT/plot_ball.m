@@ -98,7 +98,7 @@ cylshift = q/2;
     [Cx,Cy,Cz] = cylinder(1);
     Cz = 2*Cz-1;
     % Model Skins; 
-    I = imread('magskin.png');
+    I = imread('magskin.PNG');
     %P = imread('poke.png');
     Cil(3) = warp(Cx,Cy,-Cz,I);
     % Construct Transform Object
