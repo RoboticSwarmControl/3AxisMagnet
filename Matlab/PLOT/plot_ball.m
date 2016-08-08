@@ -18,8 +18,8 @@ function [Task] = plot_ball(ballsize,H,dt,speed)
 Task = 'Running Plot Magnet Ball';
 %---------------------
 format compact
-persistent cylshift s cyl vis frame
-global mov
+persistent cylshift s cyl vis frame;
+global mov orients;
 % Init Move Frame Vector
     frame = 1;
 % Column of Homogeneous
@@ -44,7 +44,7 @@ vis = figure;
     % height : ensures ample height to see whole picture
     height = ballsize*3;
     % -x x -y y -z z step
-    axis([-10 12 -10 12 0 20])
+    axis([-10 20 -10 20 0 20])
     % Set the viewing angle
     view(-135, 20)
     % Label the axes.
@@ -98,7 +98,7 @@ cylshift = q/2;
     [Cx,Cy,Cz] = cylinder(1);
     Cz = 2*Cz-1;
     % Model Skins; 
-    I = imread('magskin.PNG');
+    I = imread('magskin.png');
     %P = imread('poke.png');
     Cil(3) = warp(Cx,Cy,-Cz,I);
     % Construct Transform Object
@@ -140,8 +140,11 @@ else
     %% Draw Sphere
     % Apply transformation to cylindrical Bar Magnet
     set(cyl,'Matrix',[H(1:3,1:3),[0 0 cylshift]';0 0 0 1]); 
+    % Save Orientation    
+    orients =[orients;H(zcol+1:zcol+3)];
+
     % Move ball up such that it is rolling on a surface at z = 0
-    H(15)=H(15)+ballsize
+    H(15)=H(15)+ballsize;
     % Apply transformation to magnetic ball
     set(s,'Matrix',H);
     

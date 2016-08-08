@@ -9,12 +9,7 @@
 
 %% NOTE:should I remove mov?  
 
-
 function [curra, currb, currc, type, mov, Task] =  MAIN(type,x0,y0,phi,psi,ShapeSize,T,dt,speed,ballsize)
-% add folders
-addpath('./CLEAN');addpath('./SHAPES');addpath('./PLOT');addpath('./MATH');addpath('./CNTRL')
-
-
 %Print Task Name
 Task = 'Running Main';
 %---------------------
@@ -112,7 +107,7 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = input(prompt)==1;
             if prompt ==1
                 wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
-                playback(curra,currb,currc,wHb);
+                %playback(curra,currb,currc,wHb);
             end
         end
     end
@@ -123,10 +118,7 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
         if type==1
             % run rectangle trajectory
             [curra, currb, currc,~] = rollBallInRectangle()
-            % playback trajectory
-            
-            
-            
+            % playback trajectory/
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1                
@@ -136,12 +128,15 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
         else
             % run circle trajectory
             [curra, currb, currc,wHb] = rollBallInCircle();
-            % playback trajectory
+            % playback trajectory        
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
-                playback(curra,currb,currc,wHb);
+                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];     
+    
+        % Move ball according to current 
+        [ wHb ] = fwdcurrent(I0, If,wHb,T,dt,speed,ballsize);           
+                %playback(curra,currb,currc,wHb);
             end
         end
     end

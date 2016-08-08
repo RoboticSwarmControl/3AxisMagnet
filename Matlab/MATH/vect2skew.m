@@ -27,8 +27,7 @@ if nargin == 1
           -b    a   0  ];
 
 else
-    ERROR = 'Not Enough Input Arguments';
-    display(ERROR);
+    display('ERROR: Not Enough Input Arguments');
 end
 end
 

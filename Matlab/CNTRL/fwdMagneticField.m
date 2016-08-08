@@ -33,7 +33,7 @@ if nargin == 5
     % position of the ball center
     pos = [x,y,0]
     %Define Current-Vector(I)
-    I = [currx; curry; currz]
+    I = [currx; curry; currz];
 
     %% Eqn I => B
     

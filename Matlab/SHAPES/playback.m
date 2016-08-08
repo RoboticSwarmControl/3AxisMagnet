@@ -44,7 +44,7 @@ Task = 'Running playback';
         %zcol= 8;
         %pcol= 12; 
     % ----------------------
-    
+global orients  
 %% playback
 % Enough Inputs EXCEPTION
 if nargin == 8 ||nargin == 3 ||nargin == 4 ||nargin == 6
@@ -68,18 +68,20 @@ if nargin == 8 ||nargin == 3 ||nargin == 4 ||nargin == 6
     end
     
     % Number of recorded positions
-    arraysize = size(currx);
+    arraysize = size(orients)
     
     % Loop through all orientations
-    for n = 1:1:arraysize-1
+    for n = 1:1:arraysize(1)-1
         % Initial position Current 
-        I0 = 10*[currx(n);curry(n);currz(n)];
-        magfield(I0);
+        
+        %I0 = 10*[currx(n);curry(n);currz(n)]
+        %magfield(I0);
         % Next position Current
-        If = 10*[currx(n+1);curry(n+1);currz(n+1)];
-        magfield(If);
+        %If = 10*[currx(n+1);curry(n+1);currz(n+1)]
+        %magfield(If);
         % Move ball according to current 
-        [ wHb ] = fwdcurrent(I0, If,wHb,T,dt,speed,ballsize);
+        [ wHb ] = fwdcurrent(orients(n,:), orients(n+1,:),wHb,T,dt,speed,ballsize);
+        %[ wHb ] = fwdcurrent(I0, If,wHb,T,dt,speed,ballsize);
     end
 
 else

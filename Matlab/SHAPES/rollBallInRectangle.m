@@ -65,7 +65,7 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         % Time to completion of trajectory
         T = 10;
         % time step at which to reccord
-        dt = 0.1;
+        dt = 0.05;
         % speed of video
         speed = 0.5;
         % tool size
@@ -79,7 +79,7 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         % time step at which to reccord
         dt = 0.1;
         % speed of video
-        speed = 10;
+        speed = 100;
         % tool size
         ballsize = 1;    
     end

@@ -5,7 +5,6 @@
 % Acknowledgements:
 %
 
-
 function [ Task ] = magfield(I)
 %Print Task Name
 Task = 'Running Show MAG Field';
@@ -28,8 +27,8 @@ if nargin == 1
     %% Eqn I => B
     % position of the ball center
     for k = 0:2
-        for j = -10:2:10
-            for i = -10:2:10
+        for j = -10:4:10
+            for i = -10:4:10
             % pose 
             pos = [i,j,k];
             % pose unit vector
