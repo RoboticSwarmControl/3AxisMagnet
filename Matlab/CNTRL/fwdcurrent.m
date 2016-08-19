@@ -6,7 +6,6 @@
 % A. J. Petruska, A. W. Mahoney, and J. J. Abbott, "Remote Manipulation with a Stationary Computer-Controlled Magnetic Dipole Source," IEEE Trans. Robotics, 30(5):1222-1227, 2014. 
 % A. J. Petruska and J. J. Abbott, "Omnimagnet: An Omnidirectional Electromagnet for Controlled Dipole-Field Generation," IEEE Trans. Magnetics, 50(7):8400810(1-10), 2014. 
 % Link: http://www.telerobotics.utah.edu/index.php/Research/Omnimagnets
-
 function [ wHb, Task] = fwdcurrent(I0, If,wHb,T,dt,speed,ballsize)
 %Print Task Name
 Task = 'Running Current to Step';
@@ -34,11 +33,10 @@ Task = 'Running Current to Step';
         zcol= 8;
         pcol= 12; 
     % ----------------------
-    
+
 %% fwdcurrent
 % Enough Inputs EXCEPTION
 if nargin == 7
-   
     %% Find Rotation
     %{
     % Initial Orientation
@@ -47,82 +45,87 @@ if nargin == 7
     [phi2, psi2] = fwdMagneticField( If(1), If(2), If(3), wHb(pcol+1), wHb(pcol+2));
     % Rotation about world-z-axis
     %}     
-        % Shows direction of Init North Pole Orientation
+    
+    % Shows direction of Init North Pole Orientation
     quiver3(0,0,5, I0(1),I0(2),I0(3));
-%% I0 Angle 1
-
-    % Find latitude and longitude of Initial and final ball z-axis
-    phi1 = atan2(I0(3),sqrt(I0(2)^2+I0(1)^2));
-    % Sign correction
-    if phi1<0 
-    phi1 = phi1+2*pi;
-    end
-    % Angle from world-x-axis to B in world-x-y-plane
-    psi1 = atan2(I0(2),I0(1));
-    % Sign correction
-    if psi1<0
-        psi1 = psi1 +2*pi;
-    end
-    %% If Angle 2
-    phi2 = atan2(If(3),sqrt(If(2)^2+If(1)^2));
-    % Sign correction
-    if phi2<0 
-        phi2 = phi2+2*pi;
-    end
-    % Angle from world-x-axis to B in world-x-y-plane
-    psi2 = atan2(If(2),If(1));
-    % Sign correction
-    if psi2<0
-        psi2 = psi2 +2*pi;
-    end
-    %}
-   
-% Magnet off exception
-    if norm(I0) == 0
-        phi1 = 0;
-        psi1 = 0;
-    end
-    % Magnet off exception
-    if norm(If) == 0
-        phi2 = 0;
-        psi2 = 0;
-    end
-    phi1
-    phi2
-    %% Diff in Anlge
-    psi = psi2-psi1
-    % Rotation about world-y-axis (negativd phi2 due to backward rotation)
-    phi = phi2-phi1
-    if phi<-pi
-        phi = phi + 2*pi
-    else if phi>pi
-            phi = phi-2*pi;
-        end
-    end
+    
+    %%[phi,psi,~] = Rot_in_phipsi(I0,If);
     % No rotation occurs
-    if phi==0 && psi ==0
-    else        
-        %% Decompose whole into velocities
+    %if phi==0 && psi ==0
+    %else        
+    %R = roty(phi)*rotz(psi);
+    % Rotation Matrix from latitude and longitude
+%     R = [((cos(psi))^2+cos(phi)*(sin(psi))^2)  ((1-cos(phi))*cos(psi)*sin(psi))   (sin(phi)*sin(psi));...
+%          ((1-cos(phi))*cos(psi)*sin(psi))      (cos(phi)*(cos(psi))^2+(sin(psi))^2) (-cos(psi)*sin(phi));...
+%           (-sin(phi)*sin(psi))                 (cos(psi)*sin(phi))                 cos(phi)];
+    
 
-            % direction of linear movemnt
-            wHb(1:3,1:3) = rotz(psi)*wHb(1:3,1:3);
-            %% vsiualization
-            plot_ball(ballsize,wHb,0.001,speed);
-            % direction of roll
-            direction = -rotz(pi/2)*[wHb(ycol+1);wHb(ycol+2);0];
-            % velocity in this direction
-            vel = -direction*phi/T;
-       
-        %% whole Move
-            % Resultant Pos & Orientation
-            wHb(pcol+1:15) = wHb(pcol+1:15)' + vel*T;
-            wHb(1:3,1:3) = wHb(1:3,1:3)*roty(-phi);
-           % if norm(wHb(zcol+1:zcol+3)-If)>0
+
+
+    % point to point roll
+    [R,alph,L,~] = point2pointroll(I0'*ballsize,If'*ballsize);
+    % Convert Rotation to axis angle    
+    [u,th,~] = rot2axis(R);
+    % mass of ball in 1kg/radius
+    Trq = 1;
+    mass = ballsize*1;
+    Imoment = 0.4*mass*ballsize^2;
+    % Find angular acceleration
+    aph = Trq/Imoment;
+    % Torque assumed to be 1
+    [t1,~] = rotTime(th,0,aph);
+    [t2,~] = rotTime(th,aph*t1,-aph);
    
-           % end
-    end      
+    
+    % Use ODE 45 to see the resultant change in angle 
+    %[~,X] = ode45(@(t,X) dX_dt(t,X), 0:0.1:t, X0)
+    % find rotation
+    %Rroll = axis2rot(u,X(size(X,1)));
+    % Rotation
+    wHb(1:3,1:3) = R*wHb(1:3,1:3);
+    % Translation
+    wHb(13:15) = wHb(13:15)' + rotz(alph+pi/2)*[1;0;0]*L*ballsize;
+    wHb = round(wHb,2);
+    
+    display(u,'Torque axis')
+    display(1, 'Torque magnitude');
+    display(t1, 'Positive Torque Period')
+    display(t2, 'Negative Torque Period')
+    
+%         %% Decompose whole into velocities
+%             % Show Mag Field
+%             Torque  = [0;0;1];
+%             mt = wHb(zcol+1:zcol+3)';
+%             [h,g] = makePlotsMagfield3D(mt, Torque);
+%             
+%             % direction of linear movemnt
+%             wHb(1:3,1:3) = rotz(psi)*wHb(1:3,1:3);
+%             
+            %% vsiualization
+            %plot_ball(ballsize,wHb,dt,speed);
+            
+            %             plot_ball(ballsize,wHb,0.001,speed);
+%             % direction of roll
+%             direction = rotz(pi/2)*[wHb(ycol+1);wHb(ycol+2);0];
+%             % velocity in this direction
+%             vel = direction*phi/T;
+%             
+%             %Show Mag Field
+%             Torque = wHb(ycol+1:ycol+3)';
+%             mt = wHb(zcol+1:zcol+3)';
+%             [h,g] = makePlotsMagfield3D(mt, Torque);
+%        
+%             %% whole Move
+%             % Resultant Pos & Orientation
+%             wHb(pcol+1:15) = wHb(pcol+1:15)' + vel*T;
+%             wHb(1:3,1:3) = wHb(1:3,1:3)*roty(-phi);
+%            % if norm(wHb(zcol+1:zcol+3)-If)>0
+%    
+%            % end
+%    end      
             %% vsiualization
             plot_ball(ballsize,wHb,0.001,speed);
+            
 else
     display('ERROR: Not Enough Input Arguments');
 end

@@ -59,20 +59,17 @@ Task = 'Running Main';
 format compact
 
 %% MAIN
-% Declare Movie as Global variable
-global mov
 
 % Enough Inputs EXCEPTION
 if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10 
     %% Close all Figure
     CleanUpQ(2);
-    
+    CleanUpQ(1);
     %% Add Paths
     % MATLAB add path function
     %addpath(genpath('C:\Users\alighori\Documents\2) MENU\1) OCCUPATION\JOBS\JOB(05.26.2016) - RA (Dr. Aaron Becker)\Test Project (Omni-Magnet & Magnet Ball)\MATLAB CODE\Omnimagnet_GIT\Omnimagnet-Git\MAIN'))
     
     %% Init Graph
-    % If ballsize given
     if nargin ==10
         % Accomodate Plot for Ballsize
         plot_ball(ballsize);
@@ -107,7 +104,7 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = input(prompt)==1;
             if prompt ==1
                 wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
-                %playback(curra,currb,currc,wHb);
+                playback(curra,currb,currc,wHb);
             end
         end
     end
@@ -124,6 +121,7 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             if prompt ==1                
                 wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
+                
             end
         else
             % run circle trajectory
@@ -133,10 +131,7 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = input(prompt)==1;
             if prompt ==1
                 wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];     
-    
-        % Move ball according to current 
-        [ wHb ] = fwdcurrent(I0, If,wHb,T,dt,speed,ballsize);           
-                %playback(curra,currb,currc,wHb);
+                playback(curra,currb,currc,wHb);
             end
         end
     end
@@ -146,19 +141,18 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
     if nargin ==6
         % Init Pos vector
         p0 = [x0;y0;0];
-        % Init rot vector(rotation in world-z then magnetic-y)
-        R0 = roty(phi)*rotz(psi);
+        vect1 = [0;0;1];
+        vect2 = [sin(phi)*sin(psi);-cos(psi)*sin(phi);cos(phi)];
+       [R0,~,~,~] = point2pointroll(vect1,vect2);  
         % Init Homogeneous Vector
         wHb =  [R0,p0;0 0 0 1];
-        
         if type==1
             % run rectangle trajectory (specified rectangle)
-            [curra, currb, currc,wHb] = rollBallInRectangle(wHb, ShapeSize);
+            [curra, currb, currc,~] = rollBallInRectangle(wHb, ShapeSize);
             % playback trajectory
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
             end
         else
@@ -168,7 +162,6 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
             end
         end
@@ -180,8 +173,9 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
     if nargin == 8
         % Init Pos vector
         p0 = [x0;y0;0];
-        % Init rot vector(rotation in world-z then magnetic-y)
-        R0 = roty(phi)*rotz(psi);
+        vect1 = [0;0;1];
+        vect2 = [sin(phi)*sin(psi);-cos(psi)*sin(phi);cos(phi)];
+       [R0,~,~,~] = point2pointroll(vect1,vect2);  
         % Init Homogeneous Vector
         wHb =  [R0,p0;0 0 0 1];
 
@@ -192,7 +186,6 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
             end
         else
@@ -202,7 +195,6 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
             end
         end
@@ -213,8 +205,9 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
     if nargin == 10
         % Init Pos vector
         p0 = [x0;y0;0];
-        % Init rot vector(rotation in world-z then magnetic-y)
-        R0 = roty(phi)*rotz(psi);
+        vect1 = [0;0;1];
+        vect2 = [sin(phi)*sin(psi);-cos(psi)*sin(phi);cos(phi)];
+        [R0,~,~,~] = point2pointroll(vect1,vect2);  
         % Init Homogeneous Vector
         wHb =  [R0,p0;0 0 0 1];
 
@@ -225,7 +218,6 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
             end
         else
@@ -235,7 +227,6 @@ if nargin == 0||nargin == 1||nargin == 6||nargin == 8||nargin == 10
             prompt = 'Run playback?\n 1-Yes or 0-No\n Then Press Enter\n';
             prompt = input(prompt)==1;
             if prompt ==1
-                wHb = [1 0 0 5;0 1 0 5;0 0 1 0; 0 0 0 1];
                 playback(curra,currb,currc,wHb);
             end
         end

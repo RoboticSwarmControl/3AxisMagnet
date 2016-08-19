@@ -41,7 +41,7 @@ Task = 'Running Roll Ball in Circle';
 
 %% rollBallInCircle
 % Enough Inputs EXCEPTION
-if nargin == 0||nargin == 5||nargin == 7||nargin == 9
+if nargin == 0||nargin == 2||nargin == 3||nargin == 6
     % Default Variables 
     %% 0 Input 
     if nargin == 0
@@ -62,7 +62,7 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         % radius of circle
         radius = 10;
         % speed of video
-        speed = 1;
+        speed = 100;
         % tool size
         ballsize = 1;
         % time to completion
@@ -70,8 +70,8 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         % time step at which to reccord
         dt = 0.1;
     end
-    %% 5 Input 
-    if nargin == 0
+    %% 2 Input 
+    if nargin == 2
         % time to completion
         T = 10;
         % time step at which to reccord
@@ -81,8 +81,8 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         % tool size
         ballsize = 1;
     end
-    %% 7 Input 
-    if nargin == 0
+    %% 4 Input 
+    if nargin == 4
         % speed of video
         speed = 1;
         % tool size

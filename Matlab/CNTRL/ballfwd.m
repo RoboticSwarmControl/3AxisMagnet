@@ -6,7 +6,7 @@
 % A. J. Petruska and J. J. Abbott, "Omnimagnet: An Omnidirectional Electromagnet for Controlled Dipole-Field Generation," IEEE Trans. Magnetics, 50(7):8400810(1-10), 2014. 
 % Link: http://www.telerobotics.utah.edu/index.php/Research/Omnimagnets
 
-function [ currX, currY, currZ, wHb, Task ] = ballfwd(wHb, p2,T,dt,speed,ballsize)
+function [ currX, currY, currZ, wHb, Task ] = ballfwd(wHb,p2,T,dt,speed,ballsize)
 %Print Task Name
 Task = 'Running Move Ball Fwd';
 %---------------------
@@ -29,36 +29,40 @@ Task = 'Running Move Ball Fwd';
 
 %% ballfwd
 if nargin == 6
-    
+global orients ;    
     % Column of Homogeneous
         %xcol= 0;
         ycol= 4;
-        %zcol= 8;
+        zcol= 8;
         pcol= 12; 
     % ----------------------
+    % Number of steps reccorded total
+    % Number of steps in Translation
+        transteps = floor(3*T/(4*dt));
+    % Number of steps in rotation
+        rotsteps = floor(T/(4*dt));
+        currX = zeros(1,rotsteps+transteps+2);
+        currY = zeros(1,rotsteps+transteps+2);
+        currZ = zeros(1,rotsteps+transteps+2);
+            
+         
     
-    %% Initiate Current    
-    % Finding required current for phi and psi orientation
-    [currx, curry, currz] = inverseMagneticField(wHb);
-    currX = currx;
-    currY = curry;
-    currZ = currz;
-
+   
     %% Rotate Ball about world-z-axis
     % direction vector from p1 to p2 in world
     direction = (p2-wHb(pcol+1:15)')/norm(p2-wHb(pcol+1:15)');
     % unit vector of Magnetic-Field y-axis in world x-y-plane
     yaxis = wHb(ycol+1:ycol+3)';
     % Angle Between Magnetic-Field y-axis and vector pointing to next position
-    theta = (pi/2 +anglediff(direction,yaxis));
-    % For no rotation needed EXCEPTION
-    if isnan(direction)
+    norm(p2-wHb(pcol+1:15)')
+    if norm(p2-wHb(pcol+1:15)') ~= 0 % For no rotation needed EXCEPTION
+        [~,angz] = Rot_in_phipsi(yaxis,direction);
+        theta = angz + pi/2;
+    else
         theta = 0;
     end
     
         %% Visualization of Rotation
-        % Number of steps in rotation
-        rotsteps = floor(T/(4*dt));
         % Angular Velocity of rotation
         omegaz = theta*4/T;
         % Seperate Rotation Matrix for visualization
@@ -68,73 +72,88 @@ if nargin == 6
             % Rotation
             Rrot = rotz(omegaz*dt);
             % Convert Rrot to Homegeneous Matrix
+            Hrot0 = wHb;
             Hrot(1:3,1:3) = Rrot*Hrot(1:3,1:3);
+            % Reccord North Pole Vector
+            orients =[orients;Hrot(zcol+1:zcol+3)];
             % Visualization Function of ball after Rotation
             plot_ball(ballsize,Hrot,dt,speed);
+            
             % Find the Neccessary Current and add it to current set 
                 % magnet-field
-                [currx, curry, currz] = inverseMagneticField(Hrot);
-                currX(n+1,1) = currx;
-                currY(n+1,1) = curry;
-                currZ(n+1,1) = currz;
+                [currx, curry, currz,~] = inverseMagneticField(Hrot,Hrot0);
+                currX(n) = currx;
+                currY(n) = curry;
+                currZ(n) = currz;
+            
+             Hrot0 = Hrot;
 
         end
 
         % Pre multiply rotation for fixed frame
         wHb(1:3,1:3) = rotz(theta)*wHb(1:3,1:3);%[rotz(theta)',[0;0;0];0 0 0 1];
+        % Reccord North Pole Vector
+        orients =[orients;wHb(zcol+1:zcol+3)];    
         % Visualization Function of ball after Rotation 
         plot_ball(ballsize,wHb,0.1,speed);
         % Find the Neccessary Current and add it to current set 
             % magnet-field
-            [currx, curry, currz] = inverseMagneticField(wHb);
-            currX = [currX;currx];
-            currY = [currY;curry];
-            currZ = [currZ;currz];
+            [currx, curry, currz] = inverseMagneticField(wHb,Hrot0);
+            currX(rotsteps+1) = currx;
+            currY(rotsteps+1) = curry;
+            currZ(rotsteps+1) = currz;
     
     %% Translation
     % Rotation required to reach p2 with no slip condition
-    gama = norm(p2-wHb(pcol+1:15)')/(ballsize);
+    gama = norm(p2-wHb(pcol+1:15)')/(ballsize)
 
         %% Visualization of Translation
-        % Number of steps in Translation
-        transteps = floor(3*T/(4*dt));
         % Angular Velocity of rotation
-        omegay = gama*4/(3*T);
+        omegay = gama*4/(3*T)
         % Linear Velocity of ball
-        vel = omegay*ballsize;
+        vel = omegay*ballsize
         % Rotation matrix for visualization
-        Htrans = wHb; 
-        % size of current vectors
-        cursize = size(currX);
+        Htrans = wHb
+
         % Transformation        
         for n = 1 : transteps
+            roty(omegay*dt)
             %  Rotation
-            Htrans = Htrans*[roty(omegay*dt),[0;0;0];0 0 0 1];
+            Htrans(1:3,1:3) = Htrans(1:3,1:3)*roty(omegay*dt)
             %  Translation
-            Htrans(pcol+1:15) = Htrans(pcol+1:15)' + vel*direction*dt;
+            if isnan(norm(direction)) == 0
+            Htrans(pcol+1:15) = Htrans(pcol+1:15)' + vel*direction*dt
+            end
+            % Reccord North Pole Vector
+            orients =[orients;Htrans(zcol+1:zcol+3)];
             % Visualization Function of ball after Rotation
             plot_ball(ballsize,Htrans,dt,speed);
             % Find the Neccessary Current and add it to current set 
                 % magnet-field
-                [currx, curry, currz] = inverseMagneticField(Htrans);
-                currX(cursize(1)+n,1) = currx;
-                currY(cursize(1)+n,1) = curry;
-                currZ(cursize(1)+n,1) = currz;
+                [currx, curry, currz] = inverseMagneticField(Htrans,Hrot0);
+                currX(rotsteps +1+n) = currx;
+                currY(rotsteps +1+n) = curry;
+                currZ(rotsteps +1+n) = currz;
         end
 
         % Pre multiply rotation for fixed frame
-        wHb= wHb*[roty(gama),[0;0;0];0 0 0 1];
+        wHb(1:3,1:3) = wHb(1:3,1:3)*roty(gama);
         %  Translation
         wHb(pcol+1:15) = p2;
+        % Reccord North Pole Vector
+        orients =[orients;wHb(zcol+1:zcol+3)];
         % Visualization Function of ball after Rotation 
         plot_ball(ballsize,wHb,0.1,speed)
         % Find the Neccessary Current and add it to current set 
             % magnet-field
-            [currx, curry, currz] = inverseMagneticField(wHb);
-            currX = [currX;currx];
-            currY = [currY;curry];
-            currZ = [currZ;currz];  
+            [currx, curry, currz] = inverseMagneticField(wHb,Hrot0);
+            currX(rotsteps+transteps+2) = currx;
+            currY(rotsteps+transteps+2) = curry;
+            currZ(rotsteps+transteps+2) = currz;  
+            
+            
 else
+    
     display('ERROR: Not Enough Input Arguments');
 end
 end

@@ -44,7 +44,9 @@ Task = 'Running playback';
         %zcol= 8;
         %pcol= 12; 
     % ----------------------
-global orients  
+global orients  playbacking omega;
+playbacking = 1;
+omega = [0;0;0];
 %% playback
 % Enough Inputs EXCEPTION
 if nargin == 8 ||nargin == 3 ||nargin == 4 ||nargin == 6
@@ -79,8 +81,10 @@ if nargin == 8 ||nargin == 3 ||nargin == 4 ||nargin == 6
         % Next position Current
         %If = 10*[currx(n+1);curry(n+1);currz(n+1)]
         %magfield(If);
-        % Move ball according to current 
+        
+        % Move ball according to orientation 
         [ wHb ] = fwdcurrent(orients(n,:), orients(n+1,:),wHb,T,dt,speed,ballsize);
+        % Move ball according to current
         %[ wHb ] = fwdcurrent(I0, If,wHb,T,dt,speed,ballsize);
     end
 

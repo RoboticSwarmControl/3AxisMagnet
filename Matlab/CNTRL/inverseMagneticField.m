@@ -8,7 +8,7 @@
 % A. J. Petruska and J. J. Abbott, "Omnimagnet: An Omnidirectional Electromagnet for Controlled Dipole-Field Generation," IEEE Trans. Magnetics, 50(7):8400810(1-10), 2014. 
 % Link: http://www.telerobotics.utah.edu/index.php/Research/Omnimagnets
 
-function [ currx, curry, currz, Task ] = inverseMagneticField(H)
+function [ currx, curry, currz, Task ] = inverseMagneticField(H,H0)
 %Print Task Name
 Task = 'Running Find Required Current';
 %---------------------
@@ -28,7 +28,7 @@ Task = 'Running Find Required Current';
 
 %% inverseMagneticField 
 % Enough Inputs EXCEPTION
-if nargin == 1
+if nargin == 2
     % Column of Homogeneous
         %xcol= 0;
         %ycol= 4;
@@ -36,9 +36,13 @@ if nargin == 1
         pcol= 12; 
     % ----------------------
     
+    
+    
+    
+    
     % Mapping of Magnetic Field to Current Based on Physical 
     % Attributes of Solenoid
-    M = eye(3);
+    M = [25.1 0 0;0 25.8 0; 0 0 26.3];
     % position of the ball center
     pos = H(pcol+1:15)';
     B = H(zcol+1:zcol+3)';
@@ -49,7 +53,7 @@ if nargin == 1
     mu = 4*(10^-7)*pi;
     % Eqn parts for B => I     I = (2pi/mu)*(||P||^3)(M^-1)(3*p^*p^T-2I)*B
     I = (2*pi/mu)*(norm(pos)^3)*(M\(3*p_hat*(p_hat') - 2*eye(3)))*B;
-
+    H0;
     %% Output 
     currx = I(1);
     curry = I(2);

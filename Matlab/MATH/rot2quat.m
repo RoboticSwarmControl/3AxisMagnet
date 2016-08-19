@@ -6,7 +6,11 @@ Task = 'Running Rot 2 Quat'
 %---------------------
     %% Quaternion Decomposition && Assignment    
         %Angle
-    Tau = trace(R);
+    Tau = trace(R)
+    if Tau == -1
+        Tau = 3;
+        R = eye(3);
+    end
     %theta = acos((Tau-1)/2);
     %w = theta/2;
         %Axis    

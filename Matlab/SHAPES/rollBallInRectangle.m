@@ -39,9 +39,12 @@ Task = 'Running Roll Ball in Rectangle';
 %   [ currX, currY, currZ ] = rollBallInRectangle([1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1],[10;10],10,0.1,1,1);
 %
 
+global playbacking;
+playbacking =0;
+
 %% rollBallInRectangle
 % Enough Inputs EXCEPTION
-if nargin == 0||nargin == 5||nargin == 7||nargin == 9
+if nargin == 0||nargin == 2||nargin == 4||nargin == 6
     % Default Params____ 
     
     %% Zero Params
@@ -52,12 +55,8 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         y0 = 5;
         % Init pos
         p0 = [x0;y0;0];
-        % Init latitude
-        phi = 0;
-        % Init longitude
-        psi = 0;
-        % Init rot vector(rotation in world-z then magnetic-y)
-        R0 = roty(phi)*rotz(psi);
+        % Init orientation matrix 
+        R0 = eye(3);
         % Init Homgeneous 
         wHb = [R0,p0;0 0 0 1];
         % 3rd Corner of the rectangular trajectory 
@@ -67,7 +66,7 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         % time step at which to reccord
         dt = 0.05;
         % speed of video
-        speed = 0.5;
+        speed = 100;
         % tool size
         ballsize = 1;
     end
@@ -77,7 +76,7 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
         %  Time  t completion of trajectory
         T = 10;
         % time step at which to reccord
-        dt = 0.1;
+        dt = 0.05;
         % speed of video
         speed = 100;
         % tool size
@@ -116,11 +115,11 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
     % Period Per Leg
     TW = delT*W;
     TL = delT*L;
-
+    
     % Initialize Currents
-    curra = [];
-    currb = [];
-    currc = [];
+    curra = zeros(1,2*T/dt);
+    currb = zeros(1,2*T/dt);
+    currc = zeros(1,2*T/dt);
 
     % Four Corners of Rectangle
     corners = [wHb(pcol+1) wHb(pcol+2) 0; corner(1) wHb(pcol+2) 0;corner(1) corner(2) 0; wHb(pcol+1) corner(2) 0];
@@ -130,32 +129,36 @@ if nargin == 0||nargin == 5||nargin == 7||nargin == 9
 
     % First Leg
     % Use ballfwd Control
-    [ currX, currY, currZ, wHb] = ballfwd(wHb,corners(2,:)',TL,dt,speed,ballsize);
+    [ currX, currY, currZ, wHb] = ballfwd(wHb,corners(2,:)',TL,dt,speed,ballsize)
     % Set Required Current Vecotrs 
-    curra = [curra;currX];
-    currb = [currb;currY];
-    currc = [currc;currZ];
+    size(currX)
+    curra(1:size(currX,2)) = currX;
+    currb(1:size(currX,2)) = currY;
+    currc(1:size(currX,2)) = currZ;
+    endpt = size(currX,2);
     %}
     % Second Leg
     [ currX, currY, currZ, wHb] = ballfwd(wHb,corners(3,:)',TW,dt,speed,ballsize);
     % Set Required Current Vecotrs
-    curra = [curra;currX];
-    currb = [currb;currY];
-    currc = [currc;currZ];
-
+    curra(endpt+1:endpt+size(currX,2)) = currX;
+    currb(endpt+1:endpt+size(currX,2)) = currY;
+    currc(endpt+1:endpt+size(currX,2)) = currZ;
+    endpt = endpt + size(currX,2);
+    
     % Third Leg
     [ currX, currY, currZ, wHb] = ballfwd(wHb,corners(4,:)',TL,dt,speed,ballsize);
     % Set Required Current Vecotrs
-    curra = [curra;currX];
-    currb = [currb;currY];
-    currc = [currc;currZ];
-
+    curra(endpt+1:endpt+size(currX,2)) = currX;
+    currb(endpt+1:endpt+size(currX,2)) = currY;
+    currc(endpt+1:endpt+size(currX,2)) = currZ;
+    endpt = endpt + size(currX,2);
+    
     % Fourth Leg
     [ currX, currY, currZ] = ballfwd(wHb,corners(1,:)',TW,dt,speed,ballsize);
     % Set Required Current Vecotrs
-    curra = [curra;currX];
-    currb = [currb;currY];
-    currc = [currc;currZ];
+    curra(endpt+1:endpt+size(currX,2)) = currX;
+    currb(endpt+1:endpt+size(currX,2)) = currY;
+    currc(endpt+1:endpt+size(currX,2)) = currZ;
 else
     print('ERROR = Not Enough Input Arguments')
 end

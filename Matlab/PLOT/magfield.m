@@ -23,26 +23,34 @@ format compact
 % Enough Inputs EXCEPTION
 if nargin == 1
     % Mapping of Magnetic Field to Current Based on Physical 
-    K = eye(20);
     %% Eqn I => B
     % position of the ball center
-    for k = 0:2
-        for j = -10:4:10
-            for i = -10:4:10
+    for k = -10:1:10
+        for j = -10:1:10
+            for i = -10:1:10
             % pose 
-            pos = [i,j,k];
+            pos = [i,j,k]
             % pose unit vector
-            p_hat = pos/norm(pos);
+            p_hat = pos/norm(pos)'
             % Attributes of Solenoid
-            M = eye(3);
+            %M = [25.1 0 0;0 25.8 0; 0 0 26.3];
             % Constant of Permeability
             mu = 4*(10^-7)*pi;
             % Eqn parts for B => I 
-            temp = (2*pi/mu)*(norm(pos)^3)*(M\(3*p_hat*(p_hat') - 2*eye(3)));
+            temp = (mu/(2*pi*(norm(pos)^3)))*((3*p_hat*(p_hat') - eye(3)));
+            %temp = (2*pi/mu)*(norm(pos)^3)*((3*p_hat*(p_hat') - 2*eye(3)));
             % Current Vector
-            B = inv(temp)*I;
+            B = (mu/(2*pi*(norm(pos)^3)))*((3*p_hat*(p_hat') - eye(3)))*I
+            % Direction of B
+            arr = B/sqrt(sum(abs(B).^2,1))
             % Show magnectic field vector
-            quiver3(pos(1), pos(2), pos(3),B(1),B(2),B(3));            
+            quiver3(pos(1), pos(2), pos(3),arr(1),arr(2),arr(3));            
+%             starty = -10:1:10;
+%             startz = starty;
+%             startx = starty;
+%             h = streamline(pos(1), pos(2), pos(3),arr(1),arr(2),arr(3),startx,starty,startz);%,[.1,1000]);
+%             set(h,'Color','red')
+
             drawnow
             hold on
             end

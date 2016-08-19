@@ -43,9 +43,10 @@ if nargin == 5
     else
     p_hat = pos/norm(pos);
     % Constant of Permeability
-    mu = 4*(10^-7)*pi;
+    mu0 = 4*(10^-7)*pi;
     % Eqn parts for B => I 
-    temp = (2*pi/mu)*(norm(pos)^3)*(M\(3*p_hat*(p_hat') - 2*eye(3)));
+    temp = (2*pi/mu0)*(norm(pos)^3)*(M\(3*p_hat*(p_hat') - 2*eye(3)));
+    
     % Current Vector
     B = temp\I;
     % Unit Vector in the Direction of B
