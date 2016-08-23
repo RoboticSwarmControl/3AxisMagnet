@@ -9,6 +9,12 @@
 % Link: http://www.telerobotics.utah.edu/index.php/Research/Omnimagnets
 
 function [wHb,Task] = playback(currx,curry,currz,wHb, T, dt, speed, ballsize)
+% NOTE: The current values are not currently being used as an input. The
+% global variable orients is recording a set North pole vectors that
+% represent the orientation of the sphere at different steps along its
+% trajectory
+
+
 %Print Task Name
 Task = 'Running playback';
 %---------------------
